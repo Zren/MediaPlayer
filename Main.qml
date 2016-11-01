@@ -115,8 +115,10 @@ AppWindow {
     }
 
     MouseArea {
+        id: videoMouseArea
         anchors.fill: video
         acceptedButtons: Qt.AllButtons
+        hoverEnabled: true
         onClicked: {
             if (mouse.button == Qt.LeftButton) {
                 if (video.playbackState == MediaPlayer.PlayingState) {
@@ -129,7 +131,20 @@ AppWindow {
             }
         }
         onDoubleClicked: window.toggleFullscreen()
+        
+        cursorShape: Qt.ArrowCursor
+        onPositionChanged: {
+            videoMouseArea.cursorShape = Qt.ArrowCursor
+            hideCursorTimeout.restart()
+        }
+        Timer {
+            id: hideCursorTimeout
+            interval: 1000
+            onTriggered: videoMouseArea.cursorShape = Qt.BlankCursor
+        }
     }
+
+
 
     MouseArea {
         id: controlBarHitBox
@@ -271,13 +286,13 @@ AppWindow {
 
             // Row 3: Stats
             Rectangle {
-                visible: window.statisticsVisible || window.isFullscreen
+                visible: window.statisticsVisible
                 width: parent.width
                 height: 1
                 color: "#24272c"
             }
             Rectangle {
-                visible: window.statisticsVisible || window.isFullscreen
+                visible: window.statisticsVisible
                 width: parent.width
                 height: childrenRect.height
                 gradient: Gradient {
@@ -296,7 +311,7 @@ AppWindow {
                 }
             }
             Rectangle {
-                visible: window.statisticsVisible || window.isFullscreen
+                visible: window.statisticsVisible
                 width: parent.width
                 height: 1
                 color: "#050405"
