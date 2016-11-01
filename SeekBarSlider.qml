@@ -26,14 +26,14 @@ Slider {
         }
     }
 
-    stepSize: 0.1
+    property real incrementSize: 0.1
     function decrement() {
-        var nextValue = Math.max(0, value - stepSize)
+        var nextValue = Math.max(0, value - incrementSize)
         console.log('decrement', value, nextValue)
         video.seek(video.duration * nextValue)
     }
     function increment() {
-        var nextValue = Math.min(value + stepSize, 1)
+        var nextValue = Math.min(value + incrementSize, 1)
         console.log('increment', value, nextValue)
         video.seek(video.duration * nextValue)
     }
