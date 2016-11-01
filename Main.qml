@@ -451,7 +451,21 @@ AppWindow {
     }
 
     Component.onCompleted: {
-        var filepath = "tests/test.mp4"
-        loadAndPlayVideo(filepath)
+        console.log('args', Qt.application.arguments)
+        var args = Qt.application.arguments;
+        if (args[0].lastIndexOf('/qmlscene') === args[0].length - '/qmlscene'.length) { // endswith
+            // args[1] == Main.qml
+            if (args.length >= 3) {
+                var filepath = args[2];
+                if (args[2].indexOf('--appargs=') === 0) {
+                    filepath = args[2].substr('--appargs='.length);
+                }
+                loadAndPlayVideo(filepath);
+            } else {
+                // Testing
+                var filepath = "tests/test.mp4"
+                loadAndPlayVideo(filepath)
+            }
+        }
     }
 }
