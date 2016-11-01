@@ -8,7 +8,35 @@ Slider {
     property Video video
     property bool playingOnPressed: false
     enabled: video.seekable
-    value: video.position / video.duration
+    readonly property real videoPosition: video.position / video.duration
+    value: videoPosition
+
+    MouseArea {
+        acceptedButtons: Qt.NoButton
+        anchors.fill: parent
+        onWheel: {
+            wheel.accepted = true
+            console.log('onWheel', wheel.accepted, wheel.angleDelta)
+            var delta = wheel.angleDelta.x || wheel.angleDelta.y
+            if (delta > 0) { // Scroll down
+                seekbar.increment()
+            } else if (delta < 0) { // Scroll up
+                seekbar.decrement()
+            }
+        }
+    }
+
+    stepSize: 0.1
+    function decrement() {
+        var nextValue = Math.max(0, value - stepSize)
+        console.log('decrement', value, nextValue)
+        video.seek(video.duration * nextValue)
+    }
+    function increment() {
+        var nextValue = Math.min(value + stepSize, 1)
+        console.log('increment', value, nextValue)
+        video.seek(video.duration * nextValue)
+    }
 
     style: SliderStyle {
         groove: Rectangle {
@@ -51,7 +79,8 @@ Slider {
     }
 
     Timer {
-        interval: 1000
+        id: seekDebounce
+        interval: 400
         running: pressed
         onTriggered: {
             seekToValue()
@@ -63,6 +92,6 @@ Slider {
 
     function seekToValue() {
         video.seek(video.duration * value)
-        console.log('seek', video.duration * value, video.position,video.duration)
+        console.log('seek', video.duration * value, video.position, video.duration)
     }
 }
