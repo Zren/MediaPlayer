@@ -12,7 +12,9 @@ Slider {
     value: videoPosition
 
     MouseArea {
+        id: mouseArea
         acceptedButtons: Qt.NoButton
+        hoverEnabled: true
         anchors.fill: parent
         onWheel: {
             wheel.accepted = true
@@ -22,6 +24,79 @@ Slider {
                 seekbar.increment()
             } else if (delta < 0) { // Scroll up
                 seekbar.decrement()
+            }
+        }
+        onPositionChanged: {
+            mouse.accepted = false
+            console.log('onPositionChanged', mouse.x, mouseArea.width)
+            thumbnail.show(mouse.x)
+        }
+        onContainsMouseChanged: {
+            if (!containsMouse) {
+                thumbnail.hide()
+            }
+        }
+    }
+
+    Rectangle {
+        id: thumbnail
+        border.width: 4
+        border.color: "#111"
+        color: "#000"
+        width: 200 + border.width*2
+        height: 200 * window.videoHeight / window.videoWidth + border.width*2
+        anchors.bottom: parent.top
+        visible: false
+        property real position: 0
+        onPositionChanged: thumbnailVideo.seekToPosition()
+        property int mouseX: 0
+        x: Math.max(0, Math.min(mouseX - (width / 2), parent.width - width))
+
+        function show(mouseX) {
+            thumbnail.mouseX = mouseX
+            if (!debounceShow.running) {
+                debounceShow.restart()
+            }
+        }
+
+        function hide() {
+            thumbnail.visible = false
+            debounceShow.stop()
+        }
+
+        Video {
+            id: thumbnailVideo
+            anchors.fill: parent
+            anchors.margins: parent.border.width
+            source: video.source
+            onStatusChanged: {
+                console.log('thumbnailVideo.status', status)
+                if (status == MediaPlayer.Loaded) {
+                    thumbnailVideo.play()
+                    thumbnailVideo.pause()
+                    seekToPosition()
+                }
+            }
+            function seekToPosition() {
+                thumbnailVideo.seek(thumbnailVideo.duration * thumbnail.position)
+            }
+        }
+        Timer {
+            id: debounceShow
+            interval: 100
+            repeat: true
+            onTriggered: {
+                thumbnailVideo.source = video.source
+                thumbnail.position = thumbnail.mouseX / mouseArea.width
+                thumbnail.visible = true
+            }
+        }
+
+        Timer {
+            running: !thumbnail.visible
+            interval: 5000
+            onTriggered: {
+                thumbnailVideo.source = ""
             }
         }
     }
