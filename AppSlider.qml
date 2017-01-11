@@ -1,5 +1,5 @@
 /*
-Forked version that exposes mouseArea
+Forked version that exposes mouseArea and wheelarea.step
 */
 
 /****************************************************************************
@@ -290,6 +290,7 @@ Control {
         value: range.position
     }
 
+    property alias wheelStep: wheelarea.step
     WheelArea {
         id: wheelarea
         anchors.fill: parent
