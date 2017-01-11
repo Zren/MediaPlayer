@@ -7,7 +7,7 @@ import QtMultimedia 5.7
 AppWindow {
     id: window
     width: videoWidth
-    height: videoHeight + controlBar.height
+    height: videoHeight + controlBar.height + (menuBarVisible ? menuBar.__contentItem.height : 0)
 
     title: {
         var s = "";
