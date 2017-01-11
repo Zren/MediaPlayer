@@ -14,6 +14,7 @@ AppSlider {
     readonly property real videoPosition: video.position / video.duration
     value: videoPosition
 
+    // https://github.com/qt/qtquickcontrols/blob/dev/src/controls/Private/qquickwheelarea_p.h
     WheelArea {
         id: wheelarea
         anchors.fill: parent
