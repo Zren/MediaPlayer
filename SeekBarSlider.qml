@@ -14,16 +14,13 @@ AppSlider {
     value: videoPosition
 
     mouseArea.hoverEnabled: true
-    Connections {
-        target: seekbar.mouseArea
-        onPositionChanged: {
-            console.log('onPositionChanged', mouse.x, mouseArea.width)
-            thumbnail.show(mouse.x)
-        }
-        onContainsMouseChanged: {
-            if (!mouseArea.containsMouse) {
-                thumbnail.hide()
-            }
+    mouseArea.onPositionChanged: {
+        console.log('onPositionChanged', mouse.x, mouseArea.width)
+        thumbnail.show(mouse.x)
+    }
+    mouseArea.onContainsMouseChanged: {
+        if (!mouseArea.containsMouse) {
+            thumbnail.hide()
         }
     }
 
