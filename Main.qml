@@ -39,7 +39,7 @@ AppWindow {
     property int videoHeight: 400
 
     menuBarVisible: !hideMenuBar && !isFullscreen
-    property bool hideMenuBar: false
+    property bool hideMenuBar: true
 
     property bool bordersVisible: true
     property bool titleBarVisible: true
