@@ -3,7 +3,9 @@ import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 import QtMultimedia 5.6
 
-Slider {
+// Fork Slider so that mouseArea is exposed because using a child MouseArea conflictss.
+// https://github.com/qt/qtquickcontrols/blob/dev/src/controls/Slider.qml
+AppSlider {
     id: seekbar
     property Video video
     property bool playingOnPressed: false
@@ -11,28 +13,15 @@ Slider {
     readonly property real videoPosition: video.position / video.duration
     value: videoPosition
 
-    MouseArea {
-        id: mouseArea
-        acceptedButtons: Qt.NoButton
-        hoverEnabled: true
-        anchors.fill: parent
-        onWheel: {
-            wheel.accepted = true
-            console.log('onWheel', wheel.accepted, wheel.angleDelta)
-            var delta = wheel.angleDelta.x || wheel.angleDelta.y
-            if (delta > 0) { // Scroll down
-                seekbar.increment()
-            } else if (delta < 0) { // Scroll up
-                seekbar.decrement()
-            }
-        }
+    mouseArea.hoverEnabled: true
+    Connections {
+        target: seekbar.mouseArea
         onPositionChanged: {
-            mouse.accepted = false
             console.log('onPositionChanged', mouse.x, mouseArea.width)
             thumbnail.show(mouse.x)
         }
         onContainsMouseChanged: {
-            if (!containsMouse) {
+            if (!mouseArea.containsMouse) {
                 thumbnail.hide()
             }
         }
@@ -113,7 +102,7 @@ Slider {
         video.seek(video.duration * nextValue)
     }
 
-    style: SliderStyle {
+    style: AppSliderStyle {
         groove: Rectangle {
             implicitWidth: 200
             implicitHeight: control.height
@@ -156,10 +145,10 @@ Slider {
     Timer {
         id: seekDebounce
         interval: 400
-        running: pressed
+        running: seekbar.pressed
         onTriggered: {
             seekToValue()
-            if (pressed) {
+            if (seekbar.pressed) {
                 restart()
             }
         }
