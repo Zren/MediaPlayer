@@ -1,5 +1,6 @@
 /*
-Forked version that exposes mouseArea and wheelarea.step
+Forked version that exposes mouseArea and range,
+and disables the default wheelarea and mousewheel step code.
 */
 
 /****************************************************************************
@@ -183,6 +184,7 @@ Control {
     Keys.onUpPressed: if (!__horizontal) range.increaseSingleStep()
     Keys.onDownPressed: if (!__horizontal) range.decreaseSingleStep()
 
+    property alias range: range
     RangeModel {
         id: range
         minimumValue: 0.0
@@ -290,28 +292,28 @@ Control {
         value: range.position
     }
 
-    property alias wheelStep: wheelarea.step
-    WheelArea {
-        id: wheelarea
-        anchors.fill: parent
-        horizontalMinimumValue: slider.minimumValue
-        horizontalMaximumValue: slider.maximumValue
-        verticalMinimumValue: slider.minimumValue
-        verticalMaximumValue: slider.maximumValue
-        property real step: (slider.maximumValue - slider.minimumValue)/(range.positionAtMaximum - range.positionAtMinimum)
+    // property alias wheelarea: wheelarea
+    // WheelArea {
+    //     id: wheelarea
+    //     anchors.fill: parent
+    //     horizontalMinimumValue: slider.minimumValue
+    //     horizontalMaximumValue: slider.maximumValue
+    //     verticalMinimumValue: slider.minimumValue
+    //     verticalMaximumValue: slider.maximumValue
+    //     property real step: (slider.maximumValue - slider.minimumValue)/(range.positionAtMaximum - range.positionAtMinimum)
 
-        onVerticalWheelMoved: {
-            if (verticalDelta !== 0) {
-                var delta = Math.abs(verticalDelta)*step > stepSize ? verticalDelta*step : verticalDelta/Math.abs(verticalDelta)*stepSize
-                value -= delta * (inverted ? 1 : -1)
-            }
-        }
+    //     onVerticalWheelMoved: {
+    //         if (verticalDelta !== 0) {
+    //             var delta = Math.abs(verticalDelta)*step > stepSize ? verticalDelta*step : verticalDelta/Math.abs(verticalDelta)*stepSize
+    //             value -= delta * (inverted ? 1 : -1)
+    //         }
+    //     }
 
-        onHorizontalWheelMoved: {
-            if (horizontalDelta !== 0) {
-                var delta = Math.abs(horizontalDelta)*step > stepSize ? horizontalDelta*step : horizontalDelta/Math.abs(horizontalDelta)*stepSize
-                value += delta * (inverted ? 1 : -1)
-            }
-        }
-    }
+    //     onHorizontalWheelMoved: {
+    //         if (horizontalDelta !== 0) {
+    //             var delta = Math.abs(horizontalDelta)*step > stepSize ? horizontalDelta*step : horizontalDelta/Math.abs(horizontalDelta)*stepSize
+    //             value += delta * (inverted ? 1 : -1)
+    //         }
+    //     }
+    // }
 }

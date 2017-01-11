@@ -1,5 +1,6 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.4
+import QtQuick.Controls.Private 1.0
 import QtQuick.Controls.Styles 1.4
 import QtMultimedia 5.6
 
@@ -12,6 +13,33 @@ AppSlider {
     enabled: video.seekable
     readonly property real videoPosition: video.position / video.duration
     value: videoPosition
+
+    WheelArea {
+        id: wheelarea
+        anchors.fill: parent
+        horizontalMinimumValue: seekbar.minimumValue
+        horizontalMaximumValue: seekbar.maximumValue
+        verticalMinimumValue: seekbar.minimumValue
+        verticalMaximumValue: seekbar.maximumValue
+
+        onVerticalWheelMoved: {
+            console.log('onVerticalWheelMoved', verticalDelta)
+            if (verticalDelta > 0) { // Scroll up
+                seekbar.decrement()
+            } else if (verticalDelta < 0) { // Scroll down
+                seekbar.increment()
+            }
+        }
+
+        onHorizontalWheelMoved: {
+            console.log('onHorizontalWheelMoved', horizontalDelta)
+            if (horizontalDelta > 0) { // Scroll ?
+                seekbar.decrement()
+            } else if (horizontalDelta < 0) { // Scroll ?
+                seekbar.increment()
+            }
+        }
+    }
 
     mouseArea.hoverEnabled: true
     mouseArea.onPositionChanged: {
@@ -87,16 +115,12 @@ AppSlider {
         }
     }
 
-    property real incrementSize: 0.1
+    property real incrementSize: 5*1000 // 5 seconds
     function decrement() {
-        var nextValue = Math.max(0, value - incrementSize)
-        console.log('decrement', value, nextValue)
-        video.seek(video.duration * nextValue)
+        video.seek(video.position - incrementSize)
     }
     function increment() {
-        var nextValue = Math.min(value + incrementSize, 1)
-        console.log('increment', value, nextValue)
-        video.seek(video.duration * nextValue)
+        video.seek(video.position + incrementSize)
     }
 
     style: AppSliderStyle {
